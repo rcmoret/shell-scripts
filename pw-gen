@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require 'optparse'
+
+SYMBOLS = '!@#$%^*()_+]=?-/\:<>.'.chars.freeze
+
+OPTIONS = {
+  limit: 30,
+  excluded_characters: [],
+  show_password: false,
+}
+
+class Parser
+  def self.parse(options)
+    args = OPTIONS.dup
+
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = 'Usage: script [options]'
+
+      opts.on('-lNUM', '--limit=NUM', 'limit number of charaters') do |n|
+        args[:limit] = n.to_i
+      end
+      # excluded characters
+
+      opts.on('--no-sym', 'exclude symbols') do
+        args[:excluded_characters] += SYMBOLS.dup
+      end
+      opts.on('-x', '--exclude a,b,c', Array, 'excluded characters') do |excluded_characters|
+        args[:excluded_characters] += excluded_characters
+      end
+      opts.on('-h', '--help', 'Prints this help') do
+        puts opts
+        exit
+      end
+
+      opts.on('--show-password', 'show the password in the output') do
+        args[:show_password] = true
+      end
+    end
+
+    opt_parser.parse!(options)
+    args
+  end
+end
+
+options = Parser.parse ARGV
+
+limit = options[:limit].to_i
+excluded_characters = options[:excluded_characters]
+lower = ('a'..'z').to_a - excluded_characters
+upper = ('A'..'Z').to_a - excluded_characters
+numbers = (0..9).map(&:to_s) - excluded_characters
+symbols = SYMBOLS.dup - excluded_characters
+
+divisor = 20
+order = (0..divisor).to_a.shuffle
+
+symbol_or_number = -> { symbols.any? ? symbols.sample : numbers.sample }
+
+password = (0..limit).to_a.reduce('') do |string, num|
+  case num % divisor
+  when *order[0..6]
+    string + lower.sample
+  when *order[7..12]
+    string + numbers.sample
+  when *order[13..15]
+    string + symbol_or_number.call
+  else
+    string + upper.sample
+  end
+end
+
+options.merge(symbols: symbols.join(' ')).each_pair do |key, value|
+  puts "#{key}: #{value.inspect}"
+end
+
+puts password if options[:show_password]
+
+IO.popen('pbcopy', 'w') { |pipe| pipe.puts password }

@@ -1,0 +1,10 @@
+#! /bin/bash
+
+printf "\n* Running 👮🚨...\n"
+if ./bin/rubocop;  then
+  printf '\n🚨 ️RuboCop Passed 👮🏾 🚔 \n'
+  working-specs
+else
+  ./bin/rubocop -a
+  exit 1
+fi

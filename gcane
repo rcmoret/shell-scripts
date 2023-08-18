@@ -1,0 +1,36 @@
+#! /bin/bash
+
+COMMITTED=false
+git add -p
+if [[ -n $(git diff --cached --name-only) ]]; then
+  # there are staged changes
+  git commit -m linter
+  COMMITTED=true
+fi
+
+STASHED=false
+if [[ -n $(git diff --name-only) ]]; then
+  git stash
+  STASHED=true
+fi
+
+bin/rubocop -a
+
+if [[ $? -eq 1 ]]; then
+  if [[ STASHED ]]; then
+    git stash pop
+  fi
+  if [[ COMMITTED ]]; then
+    git reset HEAD^
+  fi
+  break
+else
+  if [[ COMMITTED ]]; then
+    git reset HEAD^
+    git add .
+    git commit --amend --no-edit
+  fi
+  if [[ STASHED ]]; then
+    git stash pop
+  fi
+fi

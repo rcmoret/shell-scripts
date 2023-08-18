@@ -1,0 +1,23 @@
+#! /bin/bash
+
+WORKING_SPECS=$(cat ../working-specs | tr '\n' ' ')
+DIFF_SPECS=$(git diff origin/main --name-only './spec/**/*_spec.rb' | tr '\n' ' ')
+ALL_SPECS=$(echo $WORKING_SPECS $DIFF_SPECS)
+# printf "\n$(echo $ALL_SPECS | tr ' ' '\n' | sort)\n"
+# bin/rspec $ALL_SPECS
+
+if [[ -n "${ALL_SPECS// }" ]]; then
+  printf "\n* Running Specs:"
+  printf "\n$(echo $ALL_SPECS | tr ' ' '\n' | sort)\n"
+  printf "\n"
+
+  if ./bin/rspec $ALL_SPECS; then
+    printf "\n✅ Passing Specs:"
+    printf "\n$(echo $ALL_SPECS | tr ' ' '\n' | sort)\n"
+  else
+    printf "❌❌❌\n"
+    exit 1
+  fi
+else
+  printf "\n* No Working Specs to Run\n"
+fi

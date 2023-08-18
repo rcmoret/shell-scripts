@@ -1,0 +1,14 @@
+#! /bin/bash
+
+echo '...fetching...'
+git fetch
+
+echo '...rebasing...'
+git rebase origin/main
+
+if mini-checks; then
+  echo '...force pushing...'
+  git push --force
+else
+  exit 1
+fi

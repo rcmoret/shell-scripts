@@ -1,0 +1,12 @@
+echo "🇯🇲 One ting Nancy kyaahn understand 🇯🇲"
+echo "BUNDLING"
+bundle install
+echo "TEST MIGRATING"
+RAILS_ENV=test bundle exec rails db:migrate
+echo "DEV MIGRATING"
+RAILS_ENV=development bundle exec rails db:migrate
+echo "TEST DATA MIGRATING"
+RAILS_ENV=test bundle exec rails db:migrate:with_data
+echo "DEV DATA MIGRATING"
+RAILS_ENV=development bundle exec rails db:migrate:with_data
+echo "🇯🇲 Bam bam dilla, bam bam 🇯🇲"

@@ -1,7 +1,11 @@
 #! /bin/bash
 
-BRANCH = $(git brach -a | fzf)
+BRANCH=$(git branch -a | fzf)
 
-LOCAL_NAME = $BRANCH | sed -e 's/remotes\/origin\///'
+echo $BRANCH
+
+LOCAL_NAME=$(echo $BRANCH | sed -e 's/remotes\/origin\///')
+
+echo $LOCAL_NAME
 
 git checkout $LOCAL_NAME

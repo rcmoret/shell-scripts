@@ -21,3 +21,5 @@ if [[ -n "${ALL_SPECS// }" ]]; then
 else
   printf "\n* No Working Specs to Run\n"
 fi
+
+git diff origin/main --name-only ./spec/**/*_spec

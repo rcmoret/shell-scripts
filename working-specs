@@ -1,5 +1,6 @@
 #! /bin/bash
 
+<<<<<<< HEAD
 WORKING_SPECS=$(cat ../working-specs | tr '\n' ' ')
 DIFF_SPECS=$(git diff origin/main --name-only './spec/**/*_spec.rb' | tr '\n' ' ')
 ALL_SPECS=$(echo $WORKING_SPECS $DIFF_SPECS)
@@ -22,4 +23,4 @@ else
   printf "\n* No Working Specs to Run\n"
 fi
 
-git diff origin/main --name-only ./spec/**/*_spec
+git diff origin/main --name-only ./spec/**/*_spec | xargs bundle exec rspec

@@ -1,11 +1,25 @@
 #! /bin/bash
 
+# Default LIMIT value
 LIMIT=10
+
+# Parse command line arguments
+while getopts "n:" opt; do
+  case $opt in
+    n) LIMIT=$OPTARG ;;  # Set LIMIT to the provided value
+    *) echo "Usage: $0 [-n limit] command"; exit 1 ;;
+  esac
+done
+
+# Shift the parsed options away, leaving only the command
+shift $((OPTIND - 1))
+
+# Main loop
 for i in $(seq 1 $LIMIT); do
   printf "\n"
   echo "---------- Starting Run # $i of $LIMIT----------"
   printf "\n"
-  $@
+  "$@"  # Execute the command passed as arguments
   if [[ $? -eq 1 ]]
   then
     break
